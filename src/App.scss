@@ -1,0 +1,146 @@
+* {
+	box-sizing: border-box;
+	font-family: Roboto, sans-serif;
+}
+
+header {
+	position: fixed;
+	background: white;
+	width: 100%;
+	top: 0;
+	z-index: 1;
+	.input-wrapper {
+		position: absolute;
+		right: 2rem;
+		width: 250px;
+		top:50px;
+		label {
+			font-weight: 700;
+			margin-bottom: 5px;
+			display: block;
+		}
+		select {
+			display: block;
+			font-size: 1rem;
+			line-height: 1.3;
+			padding: .6em 1.4em .5em .8em;
+			width: 100%;
+			max-width: 100%;
+			border: 1px solid #aaa;
+		}
+	}
+	h1 {
+		background: cadetblue;
+		font-size: 3.5rem;
+		font-weight: 900;
+		color: white;
+		text-align: center;
+		padding: 20px 0 20px;
+	}
+}
+
+.table-head {
+	margin: 0 auto;
+	width: 70%;
+	padding-bottom: 10px;
+	font-weight: 900;
+	font-size: 2rem;
+}
+
+.table-body {
+
+	left: 50%;
+	transform: translateX(-50%);
+	width: 100%;
+	position: absolute;
+	top: 280px;
+	font-size: 1.2rem;
+
+	table {
+		counter-reset: trCount;
+		width: 70%;
+		margin: 0 auto;
+		tr {
+			td {
+				position: relative;
+				&:first-child:before {
+					position: absolute;
+					counter-increment: trCount;
+					content: counter(trCount);
+					left: -3.5rem;
+					top: 50%;
+					transform: translateY(-50%);
+					font-size: 22px;
+					font-weight: bold;
+				}
+			}
+			th {
+				font-size: 1.5rem;
+			}
+		}
+	}
+	.count {
+		text-align: center;
+		font-size: 2rem;
+	}
+	.loader {
+		width: 150px;
+		height: 150px;
+		margin: 0 auto;
+
+		img {
+			width: 100%;
+		}
+	}
+}
+.repo {
+	text-align: left;
+	display: flex;
+	justify-content: start;
+	align-items: center;
+
+	#head {
+		font-size: 2rem;
+	}
+	&__avatar {
+		width: 7%;
+
+		img {
+			width: 80%;
+		}
+	}
+	&__name {
+		width: 25%;
+		padding: 0 1rem;
+	}
+	&__link {
+		width: 30%;
+		a {
+			width: 100%;
+			font-size: 0.9rem;
+			&:hover {
+				text-underline: none;
+				font-size: 16px;
+			}
+		}
+	}
+
+	&__owner {
+		width: 15%;
+		text-align: center;
+	}
+
+	&__forks {
+		width: 15%;
+		text-align: center;
+	}
+
+	&__issues {
+		width: 20%;
+		text-align: center;
+	}
+}
+
+#head {
+	font-size: 2rem;
+}
