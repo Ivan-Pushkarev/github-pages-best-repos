@@ -22,7 +22,7 @@ function App() {
           entries => {
             if (entries[0].isIntersecting) {
               setLoading(true)
-              setPageNumber(pageNumber => pageNumber + 1)
+              setPageNumber(prevPage => prevPage + 1)
             }
           },
           {threshold: 0.5}
@@ -37,13 +37,6 @@ function App() {
       setRepos([])
       setPageNumber(1)
     }
-    setTimeout(() => {
-      fetchData(pageNumber, language)
-    }, 1000)
-  }, [pageNumber, language]);
-  
-  function fetchData(pageNumber, language) {
-    console.log('Previous language', prevLanguage.current)
     axios({
       method: 'GET',
       url: 'https://api.github.com/search/repositories',
@@ -56,7 +49,8 @@ function App() {
           prevLanguage.current = language
         })
         .catch(err => console.log(err))
-  }
+  }, [pageNumber, language]);
+  
   
   const selectHandler = (e) => {
     setLanguage(e.target.value)
