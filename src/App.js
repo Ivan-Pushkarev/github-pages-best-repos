@@ -36,24 +36,6 @@ function App() {
     const pageEnd = useRef()
     
     useEffect(() => {
-        console.log('второй useEffect')
-        if (state.observerSwitcher) {
-            console.log('обзёрвер включен')
-            const observer = new IntersectionObserver(
-                entries => {
-                    if (entries[0].isIntersecting) {
-                        dispatch({type: 'increment page'})
-                    }
-                },
-                {threshold: 0.5}
-            )
-            observer.observe(pageEnd.current)
-        }
-        
-    }, [state.observerSwitcher])
-    
-    
-    useEffect(() => {
         console.log('первый useEffect')
         axios({
             method: 'GET',
@@ -72,6 +54,23 @@ function App() {
             })
             .catch(err => console.log(err))
     }, [state.pageNumber, state.language]);
+    
+    useEffect(() => {
+        console.log('второй useEffect')
+        if (state.observerSwitcher) {
+            console.log('Наблюдатель включен')
+           
+            const observer = new IntersectionObserver(
+                entries => {
+                    if (entries[0].isIntersecting) {
+                        dispatch({type: 'increment page'})
+                    }
+                },
+                {threshold: 0.5}
+            )
+            observer.observe(pageEnd.current)
+        }
+    }, [state.observerSwitcher])
     
     
     const selectHandler = (e) => {
@@ -118,7 +117,7 @@ function App() {
                     }
                     </tbody>
                 </table>
-                <div className='count' ref={pageEnd}>Number downloaded repos {state.repos.length}</div>
+                   <div className='count' ref={pageEnd}>Number downloaded repos {state.repos.length}</div>
                 
                 {
                     state.loading && <div className="loader">
