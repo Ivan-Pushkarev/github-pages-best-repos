@@ -10,7 +10,7 @@ function Repo({repo}) {
                 {repo.full_name}
             </td>
             <td className="repo__link">
-                <a href={repo.url}>{repo.url}</a>
+                <a href={repo.url} target="_blank">{repo.url}</a>
             </td>
             <td className="repo__owner">
                 {repo.owner.login}
