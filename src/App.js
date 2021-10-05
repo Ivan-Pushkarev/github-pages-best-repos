@@ -1,7 +1,7 @@
 import loader from './img/loader.gif'
 import axios from 'axios'
 import './App.css'
-import {useEffect, useReducer, useRef} from "react";
+import {useEffect, useReducer, useRef, useState} from "react";
 import Repo from "./Repo";
 
 const languages = ['javascript', 'python', 'go', 'java', 'php']
@@ -9,9 +9,9 @@ const languages = ['javascript', 'python', 'go', 'java', 'php']
 const initialState = {
     pageNumber: 1,
     loading: true,
-    observerSwitcher: false,
     repos: [],
     language: 'javascript',
+    observerOn: false
 };
 
 function reducer(state, action) {
@@ -20,7 +20,7 @@ function reducer(state, action) {
             return {...state, pageNumber: state.pageNumber + 1, loading: true}
         
         case 'add repos':
-            return {...state, repos: [...state.repos, ...action.payload], loading: false, observerSwitcher: true}
+            return {...state, repos: [...state.repos, ...action.payload], loading: false, observerOn: true}
         
         case 'new language':
             return {...initialState, language: action.payload}
@@ -31,9 +31,19 @@ function reducer(state, action) {
 }
 
 function App() {
-    
+    const [element, setElement] = useState(null)
     const [state, dispatch] = useReducer(reducer, initialState);
-    const pageEnd = useRef()
+    const observer = useRef(
+        new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting) {
+                    console.log('page increment')
+                    dispatch({type: 'increment page'})
+                }
+            },
+            {threshold: 1}
+        )
+    );
     
     useEffect(() => {
         console.log('первый useEffect')
@@ -45,39 +55,36 @@ function App() {
                 sort: 'stars',
                 order: 'desc',
                 page: state.pageNumber,
-                per_page: '30'
             }
         })
             .then(res => {
                 dispatch({type: 'add repos', payload: res.data.items})
-                
             })
             .catch(err => console.log(err))
     }, [state.pageNumber, state.language]);
     
     useEffect(() => {
-        console.log('второй useEffect')
-        if (state.observerSwitcher) {
-            console.log('Наблюдатель включен')
-           
-            const observer = new IntersectionObserver(
-                entries => {
-                    if (entries[0].isIntersecting) {
-                        dispatch({type: 'increment page'})
-                    }
-                },
-                {threshold: 0.5}
-            )
-            observer.observe(pageEnd.current)
+        const currentElement = element;
+        const currentObserver = observer.current;
+        console.log('Current element', currentElement)
+        if (currentElement && state.observerOn ) {
+            currentObserver.observe(currentElement);
         }
-    }, [state.observerSwitcher])
-    
+        return () => {
+            if (currentElement) {
+                console.log('unobserve')
+                currentObserver.unobserve(currentElement);
+            }
+        };
+    }, [element]);
     
     const selectHandler = (e) => {
+        setElement(null)
         dispatch({type: 'new language', payload: e.target.value})
     }
     console.log('Page', state.pageNumber)
     console.log('language', state.language)
+    console.log('element', element)
     
     return (
         <div>
@@ -113,11 +120,13 @@ function App() {
                 <table>
                     <tbody>
                     {
-                        state.repos.map(el => <Repo key={el.id} repo={el}/>)
+                        state.repos.map(el => <div ref={setElement} key={el.id}>
+                            <Repo ref={setElement} repo={el}/>
+                        </div>)
                     }
                     </tbody>
                 </table>
-                   <div className='count' ref={pageEnd}>Number downloaded repos {state.repos.length}</div>
+                <div className='count'>Number downloaded repos {state.repos.length}</div>
                 
                 {
                     state.loading && <div className="loader">
@@ -128,5 +137,4 @@ function App() {
         </div>
     )
 }
-
 export default App;
